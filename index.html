@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-:root{--void:#020005;--glow:#7b2fff;--glow2:#ff2fd6;--glow3:#00ffcc;--text:#e0d0ff;--muted:#6a4a9a;--danger:#ff3a3a;}
+:root{--void:#020005;--glow:#7b2fff;--glow2:#ff2fd6;--text:#e0d0ff;--muted:#6a4a9a;--danger:#ff3a3a;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--void);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow:hidden;}
 canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
@@ -20,45 +20,37 @@ canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-e
 .void-eye{font-size:3rem;display:block;text-align:center;margin-bottom:6px;animation:pulseOrb 2s infinite,rainbowFilter 3s linear infinite;}
 #landing h1{font-family:'VT323',monospace;font-size:clamp(2rem,6vw,4.5rem);text-align:center;color:#fff;line-height:1.1;animation:rgbShift 2s infinite,flicker 5s infinite;letter-spacing:2px;}
 .taglines{margin-top:8px;font-family:'VT323',monospace;font-size:1.2rem;color:#00ffcc;text-align:center;min-height:1.5rem;text-shadow:0 0 14px #00ffcc;animation:rainbowFilter 4s linear infinite;}
-p.sub{margin-top:8px;font-size:.7rem;color:#9977cc;text-align:center;font-style:italic;max-width:340px;text-shadow:0 0 8px #9977cc;}
-
-/* settings panel */
+p.sub{margin-top:8px;font-size:.7rem;color:#9977cc;text-align:center;font-style:italic;max-width:340px;}
 .settings-panel{margin-top:16px;width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;}
-.setting-row{display:flex;flex-direction:column;gap:4px;}
+.setting-row{display:flex;flex-direction:column;gap:4px;position:relative;}
 .setting-label{font-family:'VT323',monospace;font-size:1rem;letter-spacing:1px;color:#ff00ff;text-shadow:0 0 8px #ff00ff;}
-.void-input{width:100%;background:rgba(10,0,20,.85);color:#e0d0ff;border:1px solid #7b2fff;padding:9px 14px;font-family:'Space Mono',monospace;font-size:.78rem;border-radius:6px;outline:none;box-shadow:0 0 10px rgba(123,47,255,.3);transition:all .3s;animation:borderRave 3s linear infinite;}
-.void-input:focus{border-color:#ff00ff;box-shadow:0 0 16px rgba(255,0,255,.3);animation:none;}
+.void-input{width:100%;background:rgba(10,0,20,.85);color:#e0d0ff;border:1px solid #7b2fff;padding:9px 14px;font-family:'Space Mono',monospace;font-size:.78rem;border-radius:6px;outline:none;box-shadow:0 0 10px rgba(123,47,255,.3);}
+.void-input:focus{border-color:#ff00ff;box-shadow:0 0 16px rgba(255,0,255,.3);}
 .void-input::placeholder{color:var(--muted);}
-.search-wrap{position:relative;width:100%;}
-.search-dropdown{display:none;position:absolute;bottom:110%;left:0;right:0;max-height:160px;overflow-y:auto;background:rgba(8,0,16,.97);border:1px solid #7b2fff;border-radius:6px;z-index:100;scrollbar-width:thin;scrollbar-color:#5a3a8a transparent;}
-.search-dropdown.above{bottom:110%;top:auto;}
-.dd-item{padding:8px 14px;cursor:pointer;font-size:.76rem;color:#e0d0ff;transition:background .15s;font-family:'Space Mono',monospace;}
-.dd-item:hover{background:rgba(123,47,255,.3);}
 .setting-hint{font-size:.6rem;color:var(--muted);padding-left:2px;}
-
+.dd{display:none;position:absolute;top:100%;left:0;right:0;max-height:160px;overflow-y:auto;background:rgba(8,0,16,.97);border:1px solid #7b2fff;border-radius:6px;z-index:200;scrollbar-width:thin;scrollbar-color:#5a3a8a transparent;}
+.dd-item{padding:8px 14px;cursor:pointer;font-size:.76rem;color:#e0d0ff;font-family:'Space Mono',monospace;}
+.dd-item:hover{background:rgba(123,47,255,.3);}
 .btn{margin-top:12px;padding:11px 34px;background:rgba(123,47,255,.15);border:2px solid #7b2fff;color:#e0d0ff;font-family:'VT323',monospace;font-size:1.5rem;letter-spacing:3px;cursor:pointer;text-transform:uppercase;border-radius:6px;transition:all .2s;animation:borderRave 2.5s linear infinite;text-shadow:0 0 8px rgba(255,255,255,.6);}
-.btn:hover{background:linear-gradient(135deg,rgba(255,0,255,.4),rgba(0,255,204,.3));color:#fff;text-shadow:0 0 16px #fff;box-shadow:0 0 30px rgba(255,0,255,.5);animation:none;border-color:#ff00ff;}
-.btn.danger{border-color:var(--danger);color:var(--danger);background:rgba(255,58,58,.08);animation:none;text-shadow:0 0 8px var(--danger);}
-.btn.danger:hover{background:var(--danger);color:#fff;box-shadow:0 0 30px var(--danger);text-shadow:none;}
-.btn.pink{border-color:#ff2fd6;color:#ff2fd6;background:rgba(255,47,214,.08);animation:borderRave 2s linear infinite;text-shadow:0 0 8px #ff2fd6;}
+.btn:hover{background:linear-gradient(135deg,rgba(255,0,255,.4),rgba(0,255,204,.3));color:#fff;box-shadow:0 0 30px rgba(255,0,255,.5);animation:none;border-color:#ff00ff;}
+.btn.danger{border-color:var(--danger);color:var(--danger);background:rgba(255,58,58,.08);animation:none;}
+.btn.danger:hover{background:var(--danger);color:#fff;box-shadow:0 0 30px var(--danger);}
+.btn.pink{border-color:#ff2fd6;color:#ff2fd6;background:rgba(255,47,214,.08);animation:borderRave 2s linear infinite;}
 .btn.pink:hover{background:rgba(255,47,214,.3);color:#fff;}
 .btn.sm{font-size:1rem;padding:7px 18px;margin-top:0;letter-spacing:1px;}
-.btn.blocked{pointer-events:none;opacity:.3;filter:grayscale(1);animation:none!important;border-color:#555!important;color:#555!important;box-shadow:none!important;}
-
+.btn.blocked{pointer-events:none;opacity:.3;filter:grayscale(1);animation:none!important;border-color:#555!important;color:#555!important;}
 #queue-screen .orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,#ff00ff,#7b2fff,transparent);animation:pulseOrb 1.2s infinite,rainbowFilter 2s linear infinite;margin-bottom:18px;}
 #queue-screen h2{font-family:'VT323',monospace;font-size:2rem;color:#fff;text-align:center;animation:rgbShift 1.5s infinite;}
 #queue-screen p{margin-top:8px;font-size:.7rem;color:var(--muted);text-align:center;}
 #queue-count{color:#00ffcc;text-shadow:0 0 8px #00ffcc;}
-
 #chat-screen,#dm-convo-screen{justify-content:flex-start;padding:0;overflow:hidden;padding-bottom:36px;}
 .chat-header{width:100%;padding:10px 16px;display:flex;align-items:center;gap:10px;background:rgba(2,0,8,.92);backdrop-filter:blur(12px);flex-shrink:0;border-bottom:2px solid transparent;animation:borderRave 3s linear infinite;}
 .chat-header .peer-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
 .chat-header .flag-display{font-size:1.6rem;flex-shrink:0;}
-.peer-label{font-family:'VT323',monospace;font-size:1.2rem;animation:rgbShift 3s infinite;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.peer-label{font-family:'VT323',monospace;font-size:1.2rem;animation:rgbShift 3s infinite;}
 .peer-sublabel{font-size:.58rem;color:var(--muted);margin-top:1px;}
-
 .messages{flex:1;width:100%;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:var(--muted) transparent;}
-.msg{max-width:70%;padding:10px 14px;font-size:.78rem;line-height:1.6;animation:msgIn .25s cubic-bezier(.2,.8,.3,1);border-radius:12px;position:relative;word-break:break-word;}
+.msg{max-width:70%;padding:10px 14px;font-size:.78rem;line-height:1.6;animation:msgIn .25s ease;border-radius:12px;word-break:break-word;}
 .msg.mine{align-self:flex-end;background:linear-gradient(135deg,rgba(123,47,255,.35),rgba(255,47,214,.2));border:1px solid rgba(255,0,255,.3);color:#f0e0ff;box-shadow:0 0 16px rgba(255,0,255,.1);border-bottom-right-radius:3px;}
 .msg.theirs{align-self:flex-start;background:linear-gradient(135deg,rgba(0,255,204,.1),rgba(0,180,255,.07));border:1px solid rgba(0,255,204,.22);color:#d0fff5;box-shadow:0 0 16px rgba(0,255,204,.07);border-bottom-left-radius:3px;}
 .msg-meta{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
@@ -70,62 +62,54 @@ p.sub{margin-top:8px;font-size:.7rem;color:#9977cc;text-align:center;font-style:
 .msg-time{font-size:.56rem;color:var(--muted);margin-top:5px;display:block;text-align:right;}
 .msg.theirs .msg-time{text-align:left;}
 .system-msg{text-align:center;font-size:.62rem;color:#ff00ff;font-style:italic;padding:4px 0;text-shadow:0 0 8px #ff00ff;}
-
 .typing-indicator{display:none;align-self:flex-start;margin:0 16px 4px;padding:7px 12px;background:rgba(0,255,204,.06);border:1px solid rgba(0,255,204,.2);font-size:.66rem;color:#00ffcc;font-style:italic;border-radius:10px;border-bottom-left-radius:3px;align-items:center;gap:6px;}
 .typing-indicator.visible{display:flex;}
 .typing-dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:#00ffcc;animation:typingDot 1.2s infinite;}
 .typing-dots span:nth-child(2){animation-delay:.2s;}
 .typing-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-
 .chat-input-area{width:100%;padding:8px 12px;display:flex;gap:8px;background:rgba(2,0,8,.97);flex-shrink:0;border-top:1px solid rgba(123,47,255,.3);}
-.chat-input-area input{flex:1;background:rgba(20,0,40,.8);border:1px solid rgba(123,47,255,.5);color:#e0d0ff;font-family:'Space Mono',monospace;font-size:.78rem;padding:9px 12px;border-radius:10px;outline:none;transition:all .3s;}
+.chat-input-area input{flex:1;background:rgba(20,0,40,.8);border:1px solid rgba(123,47,255,.5);color:#e0d0ff;font-family:'Space Mono',monospace;font-size:.78rem;padding:9px 12px;border-radius:10px;outline:none;transition:border-color .3s;}
 .chat-input-area input:focus{border-color:#ff00ff;box-shadow:0 0 12px rgba(255,0,255,.2);}
 .chat-input-area input::placeholder{color:var(--muted);}
-.chat-input-area button{background:linear-gradient(135deg,#7b2fff,#ff2fd6);border:none;color:#fff;font-family:'VT323',monospace;font-size:1.1rem;padding:0 16px;cursor:pointer;letter-spacing:2px;border-radius:10px;transition:all .2s;}
+.chat-input-area button{background:linear-gradient(135deg,#7b2fff,#ff2fd6);border:none;color:#fff;font-family:'VT323',monospace;font-size:1.1rem;padding:0 16px;cursor:pointer;letter-spacing:2px;border-radius:10px;}
 .chat-input-area button:hover{background:linear-gradient(135deg,#00ffcc,#ff00ff);box-shadow:0 0 18px #ff00ff;color:#000;}
 .chat-actions{display:flex;gap:8px;padding:6px 12px 10px;background:rgba(2,0,8,.97);flex-shrink:0;}
 .chat-actions button{flex:1;padding:8px;font-family:'VT323',monospace;font-size:1rem;letter-spacing:1px;cursor:pointer;border-radius:8px;transition:all .2s;}
 #btn-dm{background:rgba(0,255,204,.08);border:1px solid #00ffcc;color:#00ffcc;}
 #btn-dm:hover{background:#00ffcc;color:#000;box-shadow:0 0 18px #00ffcc;}
 #btn-leave{background:rgba(255,58,58,.08);border:1px solid var(--danger);color:var(--danger);}
-#btn-leave:hover{background:var(--danger);color:#fff;box-shadow:0 0 18px var(--danger);}
-
+#btn-leave:hover{background:var(--danger);color:#fff;}
 #dm-screen{justify-content:flex-start;padding:0;overflow:hidden;}
 .dm-header{width:100%;padding:12px 16px;border-bottom:1px solid rgba(123,47,255,.3);display:flex;align-items:center;gap:10px;background:rgba(2,0,8,.92);flex-shrink:0;}
 .dm-header h2{font-family:'VT323',monospace;font-size:1.6rem;animation:rgbShift 2s infinite;flex:1;}
 .dm-list{flex:1;width:100%;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
 .dm-item{padding:10px 14px;border:1px solid rgba(123,47,255,.3);cursor:pointer;display:flex;align-items:center;gap:10px;border-radius:10px;transition:all .2s;background:rgba(20,0,40,.4);}
-.dm-item:hover{border-color:#ff00ff;box-shadow:0 0 14px rgba(255,0,255,.2);background:rgba(255,0,255,.05);}
+.dm-item:hover{border-color:#ff00ff;box-shadow:0 0 14px rgba(255,0,255,.2);}
 .dm-item .dm-flag{font-size:1.4rem;}
 .dm-item .dm-info .dm-name{font-size:.8rem;color:#e0d0ff;}
 .dm-item .dm-info .dm-preview{font-size:.62rem;color:var(--muted);margin-top:2px;}
 .empty-state{text-align:center;color:var(--muted);font-size:.73rem;margin-top:40px;font-style:italic;line-height:2;}
-
-#nk-warning{display:none;margin-top:10px;font-family:'VT323',monospace;font-size:1.3rem;text-align:center;max-width:300px;line-height:1.3;}
+#nk-warning{display:none;margin-top:10px;font-family:'VT323',monospace;font-size:1.2rem;text-align:center;max-width:300px;line-height:1.3;}
 body.nk-mode #nk-warning{display:block;animation:nkText .09s infinite;}
-
 #online-count{position:fixed;top:14px;right:16px;z-index:20;font-size:.62rem;color:var(--muted);background:rgba(2,0,8,.7);padding:4px 10px;border-radius:20px;border:1px solid rgba(123,47,255,.3);}
 #online-count span{color:#00ffcc;text-shadow:0 0 8px #00ffcc;}
-
-/* NK mode */
 @keyframes nkStrobe{0%,100%{background:#f00}10%{background:#fff}20%{background:#00f}30%{background:#f0f}40%{background:#ff0}50%{background:#0ff}60%{background:#f60}70%{background:#f09}80%{background:#0f0}90%{background:#f00}}
 @keyframes nkShake{0%,100%{transform:translate(0)}10%{transform:translate(-8px,6px) rotate(-2deg)}20%{transform:translate(8px,-6px) rotate(2deg)}30%{transform:translate(-12px,4px) rotate(-3deg)}40%{transform:translate(12px,-4px) rotate(1deg)}50%{transform:translate(-6px,10px) rotate(-1deg)}60%{transform:translate(6px,-10px) rotate(3deg)}70%{transform:translate(-10px,2px) rotate(-2deg)}80%{transform:translate(10px,-2px) rotate(2deg)}90%{transform:translate(-4px,8px) rotate(-1deg)}}
-@keyframes nkText{0%{color:#f00;text-shadow:4px 0 #0f0,-4px 0 #00f,0 0 40px #f00}25%{color:#ff0;text-shadow:-4px 0 #f0f,4px 0 #0ff,0 0 40px #ff0}50%{color:#0f0;text-shadow:4px 0 #f00,-4px 0 #f0f,0 0 40px #0f0}75%{color:#0ff;text-shadow:-4px 0 #ff0,4px 0 #f00,0 0 40px #0ff}100%{color:#f00;text-shadow:4px 0 #0f0,-4px 0 #00f,0 0 40px #f00}}
+@keyframes nkText{0%{color:#f00;text-shadow:4px 0 #0f0,-4px 0 #00f}25%{color:#ff0;text-shadow:-4px 0 #f0f,4px 0 #0ff}50%{color:#0f0;text-shadow:4px 0 #f00,-4px 0 #f0f}75%{color:#0ff;text-shadow:-4px 0 #ff0,4px 0 #f00}100%{color:#f00;text-shadow:4px 0 #0f0,-4px 0 #00f}}
 body.nk-mode{animation:nkStrobe .15s infinite!important;}
 body.nk-mode canvas{opacity:.3;}
 body.nk-mode .screen{animation:nkShake .1s infinite!important;}
-body.nk-mode #landing h1{animation:nkText .08s infinite!important;font-size:clamp(3rem,8vw,6rem)!important;}
-body.nk-mode .taglines{animation:nkText .12s infinite!important;font-size:2rem!important;}
-body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!important;}
-
+body.nk-mode #landing h1{animation:nkText .08s infinite!important;}
+body.nk-mode .taglines{animation:nkText .12s infinite!important;}
+body.nk-mode .btn{animation:nkText .1s infinite!important;}
 @keyframes rgbShift{0%{text-shadow:2px 0 #f00,-2px 0 #0ff,0 0 20px #f0f}33%{text-shadow:2px 0 #0f0,-2px 0 #f0f,0 0 20px #0fc}66%{text-shadow:-2px 0 #00f,2px 0 #ff0,0 0 20px #fa0}100%{text-shadow:2px 0 #f00,-2px 0 #0ff,0 0 20px #f0f}}
 @keyframes flicker{0%,100%{opacity:1}91%{opacity:1}92%{opacity:.2}93%{opacity:1}97%{opacity:.6}98%{opacity:1}}
 @keyframes pulseOrb{0%,100%{box-shadow:0 0 30px #ff00ff,0 0 60px #7b2fff}50%{box-shadow:0 0 60px #00ffcc,0 0 120px #ffaa00}}
 @keyframes rainbowFilter{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
 @keyframes borderRave{0%{border-color:#f0f;box-shadow:0 0 8px rgba(255,0,255,.3)}25%{border-color:#0fc;box-shadow:0 0 8px rgba(0,255,204,.3)}50%{border-color:#fa0;box-shadow:0 0 8px rgba(255,170,0,.3)}75%{border-color:#7b2fff;box-shadow:0 0 8px rgba(123,47,255,.3)}100%{border-color:#f0f;box-shadow:0 0 8px rgba(255,0,255,.3)}}
-@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes glitch{0%,100%{transform:translate(0)}25%{transform:translate(-3px,1px) skewX(2deg)}50%{transform:translate(3px,-1px)}75%{transform:translate(-1px,2px) skewX(-1deg)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glitch{0%,100%{transform:translate(0)}25%{transform:translate(-3px,1px)}50%{transform:translate(3px,-1px)}75%{transform:translate(-1px,2px)}}
 .glitch{animation:glitch .12s infinite;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:linear-gradient(#ff00ff,#00ffcc);border-radius:2px;}
@@ -136,15 +120,15 @@ body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!i
 <div class="scanline"></div>
 <div class="scanline2"></div>
 
-<!-- EPILEPSY MODAL (NK only) -->
+<!-- EPILEPSY MODAL -->
 <div id="epilepsy-modal" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.93);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
   <div style="max-width:400px;border:2px solid #ff2fd6;border-radius:10px;padding:28px;background:rgba(10,0,20,.97);box-shadow:0 0 40px rgba(255,47,214,.4);">
     <div style="font-size:2.2rem;margin-bottom:10px;">⚠️</div>
-    <div style="font-family:'VT323',monospace;font-size:1.8rem;color:#ff2fd6;text-shadow:0 0 12px #ff2fd6;margin-bottom:12px;letter-spacing:2px;">PHOTOSENSITIVITY WARNING</div>
-    <p style="font-size:.73rem;color:#c8b0ff;line-height:1.7;margin-bottom:18px;">North Korea mode contains <strong style="color:#ff2fd6;">extreme flashing lights</strong> and <strong style="color:#ff2fd6;">stroboscopic effects</strong> that may affect people with photosensitive epilepsy.<br/><br/><span style="color:#7b7b9a;font-size:.66rem;">By continuing you confirm you have read this warning.</span></p>
+    <div style="font-family:VT323,monospace;font-size:1.8rem;color:#ff2fd6;text-shadow:0 0 12px #ff2fd6;margin-bottom:12px;letter-spacing:2px;">PHOTOSENSITIVITY WARNING</div>
+    <p style="font-size:.73rem;color:#c8b0ff;line-height:1.7;margin-bottom:18px;">North Korea mode contains <strong style="color:#ff2fd6;">extreme flashing lights</strong> and <strong style="color:#ff2fd6;">stroboscopic effects</strong> that may affect people with photosensitive epilepsy.<br><br><span style="color:#7b7b9a;font-size:.66rem;">By continuing you confirm you have read this warning.</span></p>
     <div style="display:flex;gap:10px;justify-content:center;">
-      <button id="epilepsy-ok" style="background:linear-gradient(135deg,#7b2fff,#ff2fd6);border:none;color:#fff;font-family:'VT323',monospace;font-size:1.2rem;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:6px;">I UNDERSTAND</button>
-      <button id="epilepsy-cancel" style="background:rgba(255,58,58,.15);border:1px solid #ff3a3a;color:#ff3a3a;font-family:'VT323',monospace;font-size:1.2rem;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:6px;">GO BACK</button>
+      <button id="epilepsy-ok" style="background:linear-gradient(135deg,#7b2fff,#ff2fd6);border:none;color:#fff;font-family:VT323,monospace;font-size:1.2rem;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:6px;">I UNDERSTAND</button>
+      <button id="epilepsy-cancel" style="background:rgba(255,58,58,.15);border:1px solid #ff3a3a;color:#ff3a3a;font-family:VT323,monospace;font-size:1.2rem;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:6px;">GO BACK</button>
     </div>
   </div>
 </div>
@@ -155,36 +139,25 @@ body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!i
   <h1>talk to someone<br/>in the void</h1>
   <div class="taglines" id="tagline"></div>
   <p class="sub">you are not alone. but you are.</p>
-
   <div class="settings-panel">
-    <!-- Username -->
     <div class="setting-row">
       <span class="setting-label" id="username-label">// your name in the void</span>
       <input class="void-input" id="username-input" type="text" placeholder="anonymous" maxlength="20"/>
       <span class="setting-hint">leave blank to stay anonymous</span>
     </div>
-
-    <!-- Origin country -->
     <div class="setting-row">
       <span class="setting-label" id="origin-label">// your origin</span>
-      <div class="search-wrap">
-        <input class="void-input" id="origin-search" type="text" placeholder="🔍  search your country..." autocomplete="off"/>
-        <div class="search-dropdown" id="origin-dropdown"></div>
-      </div>
+      <input class="void-input" id="origin-search" type="text" placeholder="search your country..." autocomplete="off"/>
+      <div class="dd" id="origin-dd"></div>
     </div>
-
-    <!-- Match country -->
     <div class="setting-row">
       <span class="setting-label" id="match-label">// match with: anyone</span>
-      <div class="search-wrap">
-        <input class="void-input" id="match-search" type="text" placeholder="🔍  search country to match..." autocomplete="off"/>
-        <div class="search-dropdown" id="match-dropdown"></div>
-      </div>
+      <input class="void-input" id="match-search" type="text" placeholder="search country to match..." autocomplete="off"/>
+      <div class="dd" id="match-dd"></div>
     </div>
   </div>
-
   <button class="btn" id="btn-enter">enter the void</button>
-  <div id="nk-warning">⚠️ THE VOID DOES NOT RECOGNISE YOUR COORDINATES<br/>YOU CANNOT ENTER FROM THIS LOCATION<br/>🇰🇵 SIGNAL REJECTED 🇰🇵</div>
+  <div id="nk-warning">⚠️ SIGNAL REJECTED 🇰🇵 YOU CANNOT ENTER</div>
   <button class="btn pink" style="margin-top:10px;font-size:1rem;" id="btn-open-dm">📬 messages</button>
 </div>
 
@@ -201,15 +174,13 @@ body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!i
   <div class="chat-header">
     <div class="peer-info">
       <span class="flag-display" id="peer-flag">👁</span>
-      <div style="min-width:0;">
-        <div class="peer-label" id="peer-country-name">stranger</div>
+      <div>
+        <div class="peer-label" id="peer-name">stranger</div>
         <div class="peer-sublabel" id="chat-status">// connected to the void</div>
       </div>
     </div>
   </div>
-  <div class="messages" id="messages">
-    <div class="system-msg">// you have found each other in the dark</div>
-  </div>
+  <div class="messages" id="messages"><div class="system-msg">// you have found each other in the dark</div></div>
   <div class="typing-indicator" id="typing-indicator">// composing... <div class="typing-dots"><span></span><span></span><span></span></div></div>
   <div class="chat-input-area">
     <input type="text" id="chat-input" placeholder="say something into the void..." maxlength="500"/>
@@ -247,81 +218,12 @@ body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!i
 </div>
 
 <div id="online-count">👁 <span id="online-num">?</span> souls in the void</div>
-
 <div id="disclaimer" style="position:fixed;bottom:0;left:0;right:0;z-index:20;background:rgba(2,0,8,.92);backdrop-filter:blur(8px);border-top:1px solid rgba(123,47,255,.3);padding:6px 16px;font-size:.57rem;color:#5a3a7a;line-height:1.4;text-align:center;">
-  🛡️ <strong style="color:#7b5aaa;">Talk to Someone in the Void</strong> prohibits illegal content, nudity, harassment, and content involving minors. Users are responsible for their own conduct. No personal data stored beyond anonymous session IDs. <strong style="color:#7b5aaa;">13+</strong> only. &nbsp;|&nbsp; ⚠️ If you choose to move a conversation off this platform, you do so entirely at your own risk. The owner of Talk to Someone in the Void accepts <strong style="color:#7b5aaa;">no responsibility</strong> for any interactions, exchanges, or outcomes that occur outside of this site.
+  🛡️ <strong style="color:#7b5aaa;">Talk to Someone in the Void</strong> prohibits illegal content, nudity, harassment, and content involving minors. No personal data stored. <strong style="color:#7b5aaa;">13+</strong> only. ⚠️ Moving conversations off-platform is entirely at your own risk — the owner accepts <strong style="color:#7b5aaa;">no responsibility</strong> for off-platform interactions.
 </div>
 
 <script>
-// ── SLUR FILTER ──
-const SLUR_CORES = [
-  "nigger","nigga","chink","gook","spic","kike","wetback","beaner","coon","jigaboo",
-  "raghead","towelhead","sandnigger","shitskin","golliwog","nip","kraut","polack",
-  "dago","wop","greaseball","hymie","heeb","yid","paddy","fenian","taig","pikey",
-  "gypo","cholo","slope","slant","squaw","redskin","injun","faggot","tranny",
-  "shemale","poofter","poof","battyboy","sodomite","retard","spastic","mong",
-  "mongol","cripple","gimp","muzzie","paki","subhuman","femoid","roastie"
-];
-
-// converts a slur core into a fuzzy regex that catches l33tspeak, spaces, symbols
-function fuzzyPattern(word){
-  const charMap={
-    a:'[a@4\\.\\-_\\s]*',e:'[e3\\.\\-_\\s]*',i:'[i1!|\\.\\-_\\s]*',
-    o:'[o0\\.\\-_\\s]*',u:'[u\\.\\-_\\s]*',g:'[g9\\.\\-_\\s]*',
-    s:'[s\\$5\\.\\-_\\s]*',t:'[t7\\.\\-_\\s]*',n:'[n\\.\\-_\\s]*',
-    k:'[k\\.\\-_\\s]*',r:'[r\\.\\-_\\s]*',c:'[c\\.\\-_\\s]*',
-    h:'[h\\.\\-_\\s]*',f:'[f\\.\\-_\\s]*',p:'[p\\.\\-_\\s]*',
-    q:'[q\\.\\-_\\s]*',
-  };
-  return word.split('').map(c=>charMap[c]||(c.replace(/[.*+?^${}()|[\]\\]/g,'\\// ── SLUR FILTER ──
-const SLUR_LIST=["nigger","nigga","chink","gook","spic","spick","kike","wetback","beaner","zipperhead","coon","jigaboo","porch monkey","sambo","darkie","darky","raghead","towelhead","sandnigger","camel jockey","jungle bunny","tar baby","nip","kraut","polack","dago","wop","guinea","greaseball","hymie","heeb","yid","cracker","honky","paddy","fenian","taig","pikey","gypo","gyppo","cholo","slope","slant","squaw","redskin","injun","shitskin","golliwog","half-breed","faggot","fag","dyke","tranny","shemale","he-she","ladyboy","homo","poofter","poof","batty boy","battyboy","sodomite","fairy","pansy","sissy","pillow biter","carpet muncher","fudge packer","retard","retarded","spaz","spastic","mong","mongol","cretin","cripple","gimp","tard","muzzie","mussie","paki","christard","papist","proddy","whore","slut","skank","thot","bimbo","femoid","roastie","subhuman","vermin"];
-function filterSlurs(text){
-  let out=text;
-  SLUR_LIST.forEach(s=>{
-    const rx=new RegExp(`(?<![a-z])${s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}(?![a-z])`,'gi');
-    out=out.replace(rx,'[removed]');
-  });
-  return out;
-}')+'[\\s\\-_\\.]*')).join('');
-}
-
-const SLUR_REGEXES = SLUR_CORES.map(s=>new RegExp(fuzzyPattern(s),'gi'));
-
-function filterSlurs(text){
-  let out=text;
-  SLUR_REGEXES.forEach(rx=>{out=out.replace(rx,'[removed]');});
-  return out;
-}
-
-// ── AI MODERATION ──
-async function aiModerate(text){
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:100,
-        system:`You are a content moderator. Your ONLY job is to detect hate speech, slurs, and targeted harassment based on race, ethnicity, gender, sexuality, religion, or disability. Swearing and profanity are ALLOWED. Reply ONLY with valid JSON: {"flagged":true/false,"cleaned":"message with slurs replaced by [removed]"}. Never explain. Never add anything else.`,
-        messages:[{role:'user',content:text}]
-      })
-    });
-    if(!res.ok)return null;
-    const data=await res.json();
-    const raw=data.content?.[0]?.text||'';
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    return parsed.cleaned||null;
-  }catch(e){return null;}
-}
-
-async function moderateMessage(text){
-  const fuzzyFiltered=filterSlurs(text);
-  const aiResult=await aiModerate(fuzzyFiltered);
-  return aiResult||fuzzyFiltered;
-}
-
-// ── COUNTRIES ──
-const COUNTRIES=[
+var COUNTRIES = [
   {code:"AF",name:"Afghanistan",flag:"🇦🇫"},{code:"AL",name:"Albania",flag:"🇦🇱"},{code:"DZ",name:"Algeria",flag:"🇩🇿"},
   {code:"AD",name:"Andorra",flag:"🇦🇩"},{code:"AO",name:"Angola",flag:"🇦🇴"},{code:"AG",name:"Antigua & Barbuda",flag:"🇦🇬"},
   {code:"AR",name:"Argentina",flag:"🇦🇷"},{code:"AM",name:"Armenia",flag:"🇦🇲"},{code:"AU",name:"Australia",flag:"🇦🇺"},
@@ -371,7 +273,7 @@ const COUNTRIES=[
   {code:"QA",name:"Qatar",flag:"🇶🇦"},{code:"RO",name:"Romania",flag:"🇷🇴"},{code:"RU",name:"Russia",flag:"🇷🇺"},
   {code:"RW",name:"Rwanda",flag:"🇷🇼"},{code:"KN",name:"Saint Kitts & Nevis",flag:"🇰🇳"},{code:"LC",name:"Saint Lucia",flag:"🇱🇨"},
   {code:"VC",name:"Saint Vincent",flag:"🇻🇨"},{code:"WS",name:"Samoa",flag:"🇼🇸"},{code:"SM",name:"San Marino",flag:"🇸🇲"},
-  {code:"ST",name:"São Tomé & Príncipe",flag:"🇸🇹"},{code:"SA",name:"Saudi Arabia",flag:"🇸🇦"},{code:"SN",name:"Senegal",flag:"🇸🇳"},
+  {code:"ST",name:"Sao Tome & Principe",flag:"🇸🇹"},{code:"SA",name:"Saudi Arabia",flag:"🇸🇦"},{code:"SN",name:"Senegal",flag:"🇸🇳"},
   {code:"RS",name:"Serbia",flag:"🇷🇸"},{code:"SC",name:"Seychelles",flag:"🇸🇨"},{code:"SL",name:"Sierra Leone",flag:"🇸🇱"},
   {code:"SG",name:"Singapore",flag:"🇸🇬"},{code:"SK",name:"Slovakia",flag:"🇸🇰"},{code:"SI",name:"Slovenia",flag:"🇸🇮"},
   {code:"SB",name:"Solomon Islands",flag:"🇸🇧"},{code:"SO",name:"Somalia",flag:"🇸🇴"},{code:"ZA",name:"South Africa",flag:"🇿🇦"},
@@ -389,191 +291,199 @@ const COUNTRIES=[
   {code:"XX",name:"The Void",flag:"👁"}
 ];
 
-// ── FIREBASE ──
-firebase.initializeApp({
-  apiKey:"AIzaSyAwAeUs_XNsLSxUem5ONFAVldRgY5rP8oY",
-  authDomain:"ttsitv-a56b5.firebaseapp.com",
-  databaseURL:"https://ttsitv-a56b5-default-rtdb.firebaseio.com",
-  projectId:"ttsitv-a56b5",
-  storageBucket:"ttsitv-a56b5.firebasestorage.app",
-  messagingSenderId:"919920384818",
-  appId:"1:919920384818:web:65cae2aab32b4a7e18d52b"
-});
-const db=firebase.database();
+// slur filter — normalize then check
+var SLURS = ["nigger","nigga","chink","gook","spic","kike","wetback","beaner","coon","jigaboo","raghead","towelhead","sandnigger","shitskin","golliwog","nip","kraut","polack","dago","wop","greaseball","hymie","heeb","yid","paddy","fenian","taig","pikey","gypo","cholo","slope","slant","squaw","redskin","injun","faggot","tranny","shemale","poofter","poof","battyboy","sodomite","retard","spastic","mong","mongol","cripple","gimp","muzzie","paki","subhuman","femoid","roastie"];
+function norm(t){return t.toLowerCase().replace(/[@]/g,"a").replace(/4/g,"a").replace(/3/g,"e").replace(/[1!|]/g,"i").replace(/0/g,"o").replace(/9/g,"g").replace(/[$]/g,"s").replace(/5/g,"s").replace(/7/g,"t").replace(/[\s\-_.]/g,"");}
+function filterSlurs(text){var n=norm(text);for(var i=0;i<SLURS.length;i++){if(n.indexOf(SLURS[i])!==-1)return "[removed]";}return text;}
 
-// ── CANVAS ──
-const canvas=document.getElementById('bg'),ctx=canvas.getContext('2d');
-let W,H,particles=[],orbs=[];
+// firebase
+firebase.initializeApp({apiKey:"AIzaSyAwAeUs_XNsLSxUem5ONFAVldRgY5rP8oY",authDomain:"ttsitv-a56b5.firebaseapp.com",databaseURL:"https://ttsitv-a56b5-default-rtdb.firebaseio.com",projectId:"ttsitv-a56b5",storageBucket:"ttsitv-a56b5.firebasestorage.app",messagingSenderId:"919920384818",appId:"1:919920384818:web:65cae2aab32b4a7e18d52b"});
+var db = firebase.database();
+
+// canvas
+var canvas=document.getElementById("bg"),ctx=canvas.getContext("2d"),W,H,particles=[],orbs=[],frame=0;
 function mkP(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.8,vy:(Math.random()-.5)*.8,r:Math.random()*3+.8,a:Math.random()*Math.PI*2,hue:Math.random()*360,pulse:Math.random()*Math.PI*2};}
-function mkOrb(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*90+40,hue:Math.random()*360,a:Math.random()*Math.PI*2};}
-function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;particles=[];for(let i=0;i<200;i++)particles.push(mkP());orbs=[];for(let i=0;i<7;i++)orbs.push(mkOrb());}
-resize();window.addEventListener('resize',resize);
-let frame=0;
+function mkO(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*90+40,hue:Math.random()*360,a:Math.random()*Math.PI*2};}
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;particles=[];for(var i=0;i<200;i++)particles.push(mkP());orbs=[];for(var i=0;i<7;i++)orbs.push(mkO());}
+resize();window.addEventListener("resize",resize);
 function drawBg(){
-  frame++;
-  ctx.fillStyle='rgba(2,0,5,0.1)';ctx.fillRect(0,0,W,H);
-  orbs.forEach(o=>{o.x+=o.vx;o.y+=o.vy;o.hue+=.6;o.a+=.008;if(o.x<-o.r)o.x=W+o.r;if(o.x>W+o.r)o.x=-o.r;if(o.y<-o.r)o.y=H+o.r;if(o.y>H+o.r)o.y=-o.r;const sz=o.r*(1+Math.sin(o.a)*.25);const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,sz);g.addColorStop(0,`hsla(${o.hue},100%,65%,0.16)`);g.addColorStop(1,`hsla(${o.hue+60},100%,50%,0)`);ctx.beginPath();ctx.arc(o.x,o.y,sz,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();});
-  particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.01;p.pulse+=.05;p.hue+=1;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;const sz=p.r*(1+Math.sin(p.pulse)*.35);const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,sz*5);g.addColorStop(0,`hsla(${p.hue},100%,75%,0.55)`);g.addColorStop(1,`hsla(${p.hue},100%,60%,0)`);ctx.beginPath();ctx.arc(p.x,p.y,sz*5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);ctx.fillStyle=`hsl(${p.hue},100%,92%)`;ctx.fill();for(let t=1;t<=4;t++){ctx.beginPath();ctx.arc(p.x-p.vx*t*2,p.y-p.vy*t*2,sz*(1-t*.18),0,Math.PI*2);ctx.fillStyle=`hsla(${p.hue+t*25},100%,70%,${.28-t*.05})`;ctx.fill();}});
-  if(frame%240<3){ctx.fillStyle=`hsla(${frame*7},100%,80%,0.03)`;ctx.fillRect(0,0,W,H);}
+  frame++;ctx.fillStyle="rgba(2,0,5,0.1)";ctx.fillRect(0,0,W,H);
+  for(var i=0;i<orbs.length;i++){var o=orbs[i];o.x+=o.vx;o.y+=o.vy;o.hue+=.6;o.a+=.008;if(o.x<-o.r)o.x=W+o.r;if(o.x>W+o.r)o.x=-o.r;if(o.y<-o.r)o.y=H+o.r;if(o.y>H+o.r)o.y=-o.r;var sz=o.r*(1+Math.sin(o.a)*.25);var g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,sz);g.addColorStop(0,"hsla("+o.hue+",100%,65%,0.16)");g.addColorStop(1,"hsla("+(o.hue+60)+",100%,50%,0)");ctx.beginPath();ctx.arc(o.x,o.y,sz,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}
+  for(var i=0;i<particles.length;i++){var p=particles[i];p.x+=p.vx;p.y+=p.vy;p.a+=.01;p.pulse+=.05;p.hue+=1;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;var sz=p.r*(1+Math.sin(p.pulse)*.35);var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,sz*5);g.addColorStop(0,"hsla("+p.hue+",100%,75%,0.55)");g.addColorStop(1,"hsla("+p.hue+",100%,60%,0)");ctx.beginPath();ctx.arc(p.x,p.y,sz*5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);ctx.fillStyle="hsl("+p.hue+",100%,92%)";ctx.fill();}
+  if(frame%240<3){ctx.fillStyle="rgba(255,255,255,0.02)";ctx.fillRect(0,0,W,H);}
   requestAnimationFrame(drawBg);
 }
 drawBg();
 
-// ── TAGLINES ──
-const taglines=["you are not alone. but you are.","somewhere someone is also staring into nothing.","the void stares back. it is warm.","connection is a strange word for this.","hello? ...hello?","two shapes in the dark.","speak and be heard by no one you know.","this is real. probably.","are you still there?","the signal is weak. so are you."];
-let ti=0;function rotateTags(){document.getElementById('tagline').textContent=taglines[ti++%taglines.length];setTimeout(rotateTags,3200);}rotateTags();
+// taglines
+var taglines=["you are not alone. but you are.","somewhere someone is also staring into nothing.","the void stares back. it is warm.","connection is a strange word for this.","hello? ...hello?","two shapes in the dark.","speak and be heard by no one you know.","this is real. probably.","are you still there?","the signal is weak. so are you."];
+var ti=0;
+function rotateTags(){document.getElementById("tagline").textContent=taglines[ti++%taglines.length];setTimeout(rotateTags,3200);}
+rotateTags();
 
-// ── LOCALSTORAGE HELPERS ──
-function save(k,v){try{localStorage.setItem('void_'+k,JSON.stringify(v));}catch(e){}}
-function load(k,def){try{const v=localStorage.getItem('void_'+k);return v!==null?JSON.parse(v):def;}catch(e){return def;}}
+// storage
+function save(k,v){try{localStorage.setItem("void_"+k,JSON.stringify(v));}catch(e){}}
+function load(k,def){try{var v=localStorage.getItem("void_"+k);return v!==null?JSON.parse(v):def;}catch(e){return def;}}
 
-// ── STATE ──
-const uid='user_'+Math.random().toString(36).slice(2,10);
-let myCountry=null,matchCountry='ANY',myUsername='';
-let sessionId=null,peerId=null,peerCountry=null,peerUsername=null,queueRef=null,typingTimer=null,activeDmPeer=null,sessionListener=null;
+// state
+var uid="user_"+Math.random().toString(36).slice(2,10);
+var myCountry=null,matchCountry="ANY",myUsername="";
+var sessionId=null,peerId=null,peerCountry=null,peerUsername=null,queueRef=null,typingTimer=null,activeDmPeer=null,sessionListener=null;
 
-// ── USERNAME ──
-const usernameInput=document.getElementById('username-input');
-myUsername=load('username','');
-usernameInput.value=myUsername;
-usernameInput.addEventListener('input',()=>{
-  const raw=usernameInput.value.trim().slice(0,20);
-  const filtered=filterSlurs(raw);
-  if(filtered!==raw){usernameInput.value=filtered;} 
-  myUsername=filtered;
-  save('username',myUsername);
-  document.getElementById('username-label').textContent=myUsername?`// you are: ${myUsername}`:'// your name in the void';
-});
-if(myUsername) document.getElementById('username-label').textContent=`// you are: ${myUsername}`;
+function show(id){var screens=document.querySelectorAll(".screen");for(var i=0;i<screens.length;i++)screens[i].classList.add("hidden");document.getElementById(id).classList.remove("hidden");}
+function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}
+function displayName(u,c){return u||(c&&c.name?"stranger // "+c.name:"stranger");}
+function findCountry(code){for(var i=0;i<COUNTRIES.length;i++)if(COUNTRIES[i].code===code)return COUNTRIES[i];return null;}
 
-// ── SEARCH DROPDOWN FACTORY ──
-function makeSearchDropdown(inputEl,dropdownEl,options,onSelect,allowAny=false){
-  function render(q){
-    const lq=q.toLowerCase().trim();
-    const filtered=(allowAny?[{code:'ANY',name:'Anyone in the void',flag:'🌍'},...options]:options).filter(c=>c.name.toLowerCase().includes(lq)||c.code.toLowerCase().includes(lq));
-    dropdownEl.innerHTML='';
-    filtered.slice(0,18).forEach(c=>{
-      const item=document.createElement('div');
-      item.className='dd-item';
-      item.textContent=`${c.flag}  ${c.name}`;
-      item.addEventListener('mousedown',e=>{e.preventDefault();onSelect(c);dropdownEl.style.display='none';});
-      dropdownEl.appendChild(item);
-    });
-    dropdownEl.style.display=filtered.length?'block':'none';
+// search dropdown
+function makeDD(inputEl, ddEl, list, onPick, withAny) {
+  var opts = withAny ? [{code:"ANY",name:"Anyone in the void",flag:"🌍"}].concat(list) : list;
+  function render(q) {
+    var lq = q.toLowerCase();
+    ddEl.innerHTML = "";
+    var count = 0;
+    for (var i = 0; i < opts.length && count < 18; i++) {
+      var c = opts[i];
+      if (c.name.toLowerCase().indexOf(lq) !== -1 || c.code.toLowerCase().indexOf(lq) !== -1) {
+        count++;
+        var item = document.createElement("div");
+        item.className = "dd-item";
+        item.textContent = c.flag + "  " + c.name;
+        item.setAttribute("data-code", c.code);
+        ddEl.appendChild(item);
+      }
+    }
+    ddEl.style.display = count > 0 ? "block" : "none";
   }
-  inputEl.addEventListener('focus',()=>render(inputEl.value));
-  inputEl.addEventListener('input',()=>render(inputEl.value));
-  inputEl.addEventListener('blur',()=>setTimeout(()=>dropdownEl.style.display='none',150));
+  ddEl.addEventListener("mousedown", function(e) {
+    var item = e.target.closest ? e.target.closest(".dd-item") : e.target;
+    if (!item || !item.getAttribute("data-code")) return;
+    e.preventDefault();
+    var code = item.getAttribute("data-code");
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].code === code) { onPick(opts[i]); break; }
+    }
+    ddEl.style.display = "none";
+  });
+  inputEl.addEventListener("focus", function() { render(inputEl.value); });
+  inputEl.addEventListener("input", function() { render(inputEl.value); });
+  inputEl.addEventListener("blur", function() { setTimeout(function(){ddEl.style.display="none";}, 200); });
 }
 
-// ── ORIGIN SEARCH ──
-const savedOriginCode=load('origin','GB');
-myCountry=COUNTRIES.find(c=>c.code===savedOriginCode)||COUNTRIES.find(c=>c.code==='GB');
-const originInput=document.getElementById('origin-search');
-originInput.value=`${myCountry.flag}  ${myCountry.name}`;
-document.getElementById('origin-label').textContent=`// your origin: ${myCountry.flag} ${myCountry.name}`;
-
-makeSearchDropdown(originInput,document.getElementById('origin-dropdown'),COUNTRIES,(c)=>{
-  if(c.code==='KP'){
-    document.getElementById('epilepsy-modal').style.display='flex';
-    return;
-  }
-  myCountry=c;
-  save('origin',c.code);
-  originInput.value=`${c.flag}  ${c.name}`;
-  document.getElementById('origin-label').textContent=`// your origin: ${c.flag} ${c.name}`;
-  document.body.classList.remove('nk-mode');
-  document.getElementById('btn-enter').classList.remove('blocked');
+// username
+var usernameInput = document.getElementById("username-input");
+myUsername = load("username","");
+usernameInput.value = myUsername;
+if(myUsername) document.getElementById("username-label").textContent = "// you are: " + myUsername;
+usernameInput.addEventListener("input", function() {
+  myUsername = filterSlurs(usernameInput.value.slice(0,20));
+  usernameInput.value = myUsername;
+  save("username", myUsername);
+  document.getElementById("username-label").textContent = myUsername ? "// you are: " + myUsername : "// your name in the void";
 });
 
-// ── MATCH SEARCH ──
-const savedMatchCode=load('match','ANY');
-matchCountry=savedMatchCode;
-const matchInput=document.getElementById('match-search');
-if(matchCountry!=='ANY'){
-  const mc=COUNTRIES.find(c=>c.code===matchCountry);
-  if(mc){matchInput.value=`${mc.flag}  ${mc.name}`;document.getElementById('match-label').textContent=`// match with: ${mc.flag} ${mc.name}`;}
+// origin
+var savedOrigin = load("origin","GB");
+myCountry = findCountry(savedOrigin) || findCountry("GB");
+var originInput = document.getElementById("origin-search");
+originInput.value = myCountry.flag + "  " + myCountry.name;
+document.getElementById("origin-label").textContent = "// your origin: " + myCountry.flag + " " + myCountry.name;
+makeDD(originInput, document.getElementById("origin-dd"), COUNTRIES, function(c) {
+  if (c.code === "KP") { document.getElementById("epilepsy-modal").style.display = "flex"; return; }
+  myCountry = c;
+  save("origin", c.code);
+  originInput.value = c.flag + "  " + c.name;
+  document.getElementById("origin-label").textContent = "// your origin: " + c.flag + " " + c.name;
+  document.body.classList.remove("nk-mode");
+  document.getElementById("btn-enter").classList.remove("blocked");
+}, false);
+
+// match
+var savedMatch = load("match","ANY");
+matchCountry = savedMatch;
+var matchInput = document.getElementById("match-search");
+if (matchCountry !== "ANY") {
+  var mc = findCountry(matchCountry);
+  if (mc) { matchInput.value = mc.flag + "  " + mc.name; document.getElementById("match-label").textContent = "// match with: " + mc.flag + " " + mc.name; }
 }
-makeSearchDropdown(matchInput,document.getElementById('match-dropdown'),COUNTRIES.filter(c=>c.code!=='KP'),(c)=>{
-  matchCountry=c.code;
-  save('match',c.code);
-  matchInput.value=c.code==='ANY'?'':`${c.flag}  ${c.name}`;
-  document.getElementById('match-label').textContent=c.code==='ANY'?'// match with: anyone':`// match with: ${c.flag} ${c.name}`;
-},true);
+var matchList = [];
+for (var i = 0; i < COUNTRIES.length; i++) { if (COUNTRIES[i].code !== "KP") matchList.push(COUNTRIES[i]); }
+makeDD(matchInput, document.getElementById("match-dd"), matchList, function(c) {
+  matchCountry = c.code;
+  save("match", c.code);
+  matchInput.value = c.code === "ANY" ? "" : c.flag + "  " + c.name;
+  document.getElementById("match-label").textContent = c.code === "ANY" ? "// match with: anyone" : "// match with: " + c.flag + " " + c.name;
+}, true);
 
-// ── NK MODAL ──
-const modal=document.getElementById('epilepsy-modal');
-document.getElementById('epilepsy-ok').addEventListener('click',()=>{
-  modal.style.display='none';
-  myCountry=COUNTRIES.find(c=>c.code==='KP');
-  save('origin','KP');
-  originInput.value='🇰🇵  North Korea';
-  document.getElementById('origin-label').textContent='// your origin: 🇰🇵 North Korea';
-  document.body.classList.add('nk-mode');
-  document.getElementById('btn-enter').classList.add('blocked');
-  document.getElementById('flag-label'+'');//noop
+// NK modal
+document.getElementById("epilepsy-ok").addEventListener("click", function() {
+  document.getElementById("epilepsy-modal").style.display = "none";
+  myCountry = findCountry("KP");
+  save("origin","KP");
+  originInput.value = "🇰🇵  North Korea";
+  document.getElementById("origin-label").textContent = "// your origin: 🇰🇵 North Korea";
+  document.body.classList.add("nk-mode");
+  document.getElementById("btn-enter").classList.add("blocked");
 });
-document.getElementById('epilepsy-cancel').addEventListener('click',()=>{
-  modal.style.display='none';
-  const prev=load('origin','GB');
-  myCountry=COUNTRIES.find(c=>c.code===prev&&c.code!=='KP')||COUNTRIES.find(c=>c.code==='GB');
-  originInput.value=`${myCountry.flag}  ${myCountry.name}`;
-  document.getElementById('origin-label').textContent=`// your origin: ${myCountry.flag} ${myCountry.name}`;
+document.getElementById("epilepsy-cancel").addEventListener("click", function() {
+  document.getElementById("epilepsy-modal").style.display = "none";
+  var prev = load("origin","GB");
+  myCountry = (prev !== "KP" && findCountry(prev)) || findCountry("GB");
+  originInput.value = myCountry.flag + "  " + myCountry.name;
+  document.getElementById("origin-label").textContent = "// your origin: " + myCountry.flag + " " + myCountry.name;
 });
 
-function getDmPeerId(dmId){
-  // dmId is two uids joined by _ but uids themselves contain _ so we match by prefix
-  const parts=dmId.split('_');
-  // uids are "user_XXXXXXXX" so rejoin in pairs
-  const idA=parts.slice(0,2).join('_');
-  const idB=parts.slice(2).join('_');
-  return idA===uid?idB:idA;
-}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
-function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
-function displayName(username,country){return username||`stranger // ${country?.name||'void'}`;}
-
-// ── PRESENCE ──
-const presRef=db.ref(`presence/${uid}`);
+// presence
+var presRef = db.ref("presence/" + uid);
 presRef.set({online:true,ts:Date.now()});
 presRef.onDisconnect().remove();
-db.ref('presence').on('value',snap=>{document.getElementById('online-num').textContent=snap.exists()?Object.keys(snap.val()).length:0;});
+db.ref("presence").on("value", function(snap) {
+  document.getElementById("online-num").textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
+});
 
-// ── ENTER VOID ──
-document.getElementById('btn-enter').addEventListener('click',enterVoid);
-function enterVoid(){
-  show('queue-screen');
-  db.ref('queue').once('value').then(snap=>{
-    let matched=false;
-    if(snap.exists()){
-      for(const [wid,wdata] of Object.entries(snap.val())){
-        if(wid===uid)continue;
-        const theirMatch=wdata.matchCountry||'ANY';
-        const iWantThem=matchCountry==='ANY'||matchCountry===wdata.country?.code;
-        const theyWantMe=theirMatch==='ANY'||theirMatch===myCountry.code;
-        if(!iWantThem||!theyWantMe)continue;
-        matched=true;peerId=wid;peerCountry=wdata.country;peerUsername=wdata.username||'';
-        db.ref(`queue/${wid}`).remove();
-        const sRef=db.ref('sessions').push();
-        sRef.set({[uid]:{country:myCountry,username:myUsername},[wid]:{country:peerCountry,username:peerUsername},created:Date.now()}).then(()=>{sessionId=sRef.key;startChat();});
+// enter void
+document.getElementById("btn-enter").addEventListener("click", enterVoid);
+function enterVoid() {
+  show("queue-screen");
+  db.ref("queue").once("value").then(function(snap) {
+    var matched = false;
+    if (snap.exists()) {
+      var entries = snap.val();
+      for (var wid in entries) {
+        if (wid === uid) continue;
+        var wdata = entries[wid];
+        var theirMatch = wdata.matchCountry || "ANY";
+        var iWantThem = matchCountry === "ANY" || matchCountry === (wdata.country && wdata.country.code);
+        var theyWantMe = theirMatch === "ANY" || theirMatch === myCountry.code;
+        if (!iWantThem || !theyWantMe) continue;
+        matched = true; peerId = wid; peerCountry = wdata.country; peerUsername = wdata.username || "";
+        db.ref("queue/" + wid).remove();
+        var sRef = db.ref("sessions").push();
+        var sessData = {};
+        sessData[uid] = {country:myCountry, username:myUsername};
+        sessData[wid] = {country:peerCountry, username:peerUsername};
+        sessData.created = Date.now();
+        sRef.set(sessData).then(function() { sessionId = sRef.key; startChat(); });
         break;
       }
     }
-    if(!matched){
-      queueRef=db.ref(`queue/${uid}`);
-      queueRef.set({country:myCountry,matchCountry,username:myUsername,ts:Date.now()});
+    if (!matched) {
+      queueRef = db.ref("queue/" + uid);
+      queueRef.set({country:myCountry, matchCountry:matchCountry, username:myUsername, ts:Date.now()});
       queueRef.onDisconnect().remove();
-      sessionListener=db.ref('sessions').on('value',snap=>{
-        if(!snap.exists())return;
-        for(const [sid,data] of Object.entries(snap.val())){
-          const keys=Object.keys(data).filter(k=>k!=='created');
-          if(keys.includes(uid)){
-            db.ref('sessions').off('value',sessionListener);
-            sessionId=sid;
-            peerId=keys.find(k=>k!==uid);
-            peerCountry=data[peerId]?.country||data[peerId];
-            peerUsername=data[peerId]?.username||'';
-            startChat();return;
+      sessionListener = db.ref("sessions").on("value", function(snap) {
+        if (!snap.exists()) return;
+        var sessions = snap.val();
+        for (var sid in sessions) {
+          var data = sessions[sid];
+          var keys = Object.keys(data).filter(function(k){return k!=="created";});
+          if (keys.indexOf(uid) !== -1) {
+            db.ref("sessions").off("value", sessionListener);
+            sessionId = sid;
+            peerId = keys.filter(function(k){return k!==uid;})[0];
+            peerCountry = data[peerId] && data[peerId].country ? data[peerId].country : data[peerId];
+            peerUsername = (data[peerId] && data[peerId].username) || "";
+            startChat(); return;
           }
         }
       });
@@ -581,105 +491,142 @@ function enterVoid(){
   });
 }
 
-function startChat(){
-  const peerDisplay=displayName(peerUsername,peerCountry);
-  document.getElementById('peer-flag').textContent=peerCountry?.flag||'👁';
-  document.getElementById('peer-country-name').textContent=peerDisplay;
-  document.getElementById('messages').innerHTML='<div class="system-msg">// you have found each other in the dark</div>';
-  show('chat-screen');
-  db.ref(`sessions/${sessionId}/messages`).on('child_added',snap=>appendMsg(snap.val()));
-  db.ref(`sessions/${sessionId}/typing/${peerId}`).on('value',snap=>{
-    document.getElementById('typing-indicator').classList.toggle('visible',snap.exists()&&snap.val()===true);
+function startChat() {
+  document.getElementById("peer-flag").textContent = peerCountry && peerCountry.flag ? peerCountry.flag : "👁";
+  document.getElementById("peer-name").textContent = displayName(peerUsername, peerCountry);
+  document.getElementById("messages").innerHTML = '<div class="system-msg">// you have found each other in the dark</div>';
+  show("chat-screen");
+  db.ref("sessions/" + sessionId + "/messages").on("child_added", function(snap) { appendMsg(snap.val(), "messages"); });
+  db.ref("sessions/" + sessionId + "/typing/" + peerId).on("value", function(snap) {
+    document.getElementById("typing-indicator").classList[snap.exists() && snap.val() ? "add" : "remove"]("visible");
   });
-  db.ref(`sessions/${sessionId}`).on('value',snap=>{
-    if(!snap.exists()){const s=document.getElementById('chat-status');s.textContent='// they dissolved back into the void';s.style.color='var(--danger)';}
+  db.ref("sessions/" + sessionId).on("value", function(snap) {
+    if (!snap.exists()) { var s=document.getElementById("chat-status"); s.textContent="// they dissolved back into the void"; s.style.color="var(--danger)"; }
   });
 }
 
-function appendMsg(msg,container='messages'){
-  const isMine=msg.uid===uid;
-  const text=filterSlurs(msg.text);
-  const flag=isMine?(myCountry?.flag||'👁'):(peerCountry?.flag||'👁');
-  const senderName=isMine?(myUsername||'you'):(peerUsername||`stranger`);
-  const time=new Date(msg.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const div=document.createElement('div');
-  div.className=`msg ${isMine?'mine':'theirs'}`;
-  div.innerHTML=`<div class="msg-meta"><span class="msg-flag">${flag}</span><span class="msg-sender">${esc(senderName)}</span></div><span class="msg-text">${esc(text)}</span><span class="msg-time">${time}</span>`;
-  const msgs=document.getElementById(container);msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+function appendMsg(msg, containerId) {
+  var isMine = msg.uid === uid;
+  var text = filterSlurs(msg.text);
+  var flag = isMine ? (myCountry&&myCountry.flag||"👁") : (peerCountry&&peerCountry.flag||"👁");
+  var sender = isMine ? (myUsername||"you") : (peerUsername||"stranger");
+  var time = new Date(msg.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  var div = document.createElement("div");
+  div.className = "msg " + (isMine?"mine":"theirs");
+  div.innerHTML = '<div class="msg-meta"><span class="msg-flag">'+flag+'</span><span class="msg-sender">'+esc(sender)+'</span></div><span class="msg-text">'+esc(text)+'</span><span class="msg-time">'+time+'</span>';
+  var container = document.getElementById(containerId);
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
 }
 
-document.getElementById('btn-send').addEventListener('click',sendMsg);
-document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();else setTyping(true);});
-document.getElementById('chat-input').addEventListener('blur',()=>setTyping(false));
-async function sendMsg(){
-  const inp=document.getElementById('chat-input');const text=inp.value.trim();
-  if(!text||!sessionId)return;inp.value='';setTyping(false);
-  const clean=await moderateMessage(text);
-  db.ref(`sessions/${sessionId}/messages`).push({uid,text:clean,ts:Date.now()});
+document.getElementById("btn-send").addEventListener("click", sendMsg);
+document.getElementById("chat-input").addEventListener("keydown", function(e) { if(e.key==="Enter") sendMsg(); else setTyping(true); });
+document.getElementById("chat-input").addEventListener("blur", function() { setTyping(false); });
+function sendMsg() {
+  var inp = document.getElementById("chat-input");
+  var text = inp.value.trim();
+  if (!text || !sessionId) return;
+  inp.value = ""; setTyping(false);
+  db.ref("sessions/" + sessionId + "/messages").push({uid:uid, text:filterSlurs(text), ts:Date.now()});
 }
-function setTyping(v){if(!sessionId)return;clearTimeout(typingTimer);db.ref(`sessions/${sessionId}/typing/${uid}`).set(v);if(v)typingTimer=setTimeout(()=>setTyping(false),3000);}
+function setTyping(v) {
+  if (!sessionId) return;
+  clearTimeout(typingTimer);
+  db.ref("sessions/" + sessionId + "/typing/" + uid).set(v);
+  if (v) typingTimer = setTimeout(function(){setTyping(false);}, 3000);
+}
 
-document.getElementById('btn-dm').addEventListener('click',()=>{
-  if(!peerId)return;
-  const dmId=[uid,peerId].sort().join('_');
-  activeDmPeer={id:peerId,country:peerCountry,username:peerUsername,dmId};
+document.getElementById("btn-dm").addEventListener("click", function() {
+  if (!peerId) return;
+  var ids = [uid, peerId].sort();
+  var dmId = ids[0] + "__" + ids[1];
+  activeDmPeer = {id:peerId, country:peerCountry, username:peerUsername, dmId:dmId};
   openDmConvo(activeDmPeer);
 });
-document.getElementById('btn-leave').addEventListener('click',leaveChat);
-function leaveChat(){if(sessionId){db.ref(`sessions/${sessionId}`).remove();sessionId=null;}if(queueRef){queueRef.remove();queueRef=null;}peerId=null;peerCountry=null;peerUsername=null;show('landing');}
-document.getElementById('btn-cancel-queue').addEventListener('click',()=>{if(queueRef){queueRef.remove();queueRef=null;}db.ref('sessions').off('value',sessionListener);show('landing');});
+document.getElementById("btn-leave").addEventListener("click", leaveChat);
+function leaveChat() {
+  if (sessionId) { db.ref("sessions/"+sessionId).remove(); sessionId=null; }
+  if (queueRef) { queueRef.remove(); queueRef=null; }
+  peerId=null; peerCountry=null; peerUsername=null; show("landing");
+}
+document.getElementById("btn-cancel-queue").addEventListener("click", function() {
+  if (queueRef) { queueRef.remove(); queueRef=null; }
+  db.ref("sessions").off("value", sessionListener);
+  show("landing");
+});
 
-// ── DM ──
-document.getElementById('btn-open-dm').addEventListener('click',openDmInbox);
-document.getElementById('btn-back-from-dm').addEventListener('click',()=>show('landing'));
-document.getElementById('btn-back-from-convo').addEventListener('click',openDmInbox);
-function openDmInbox(){
-  show('dm-screen');
-  const list=document.getElementById('dm-list');
-  list.innerHTML='<div class="empty-state">// scanning the void...</div>';
-  db.ref('dms').once('value').then(snap=>{
-    list.innerHTML='';
-    if(!snap.exists()){list.innerHTML='<div class="empty-state">// no echoes yet<br/>// talk to someone first</div>';return;}
-    let found=false;
-    for(const [dmId,convo] of Object.entries(snap.val())){
-      if(!dmId.includes(uid))continue;found=true;
-      const msgs=convo.messages?Object.values(convo.messages).sort((a,b)=>b.ts-a.ts):[];
-      const last=msgs[0];
-      const otherId=getDmPeerId(dmId);
-      const otherCountry=convo.countries?.[otherId]||{flag:'👁',name:'the void'};
-      const otherUsername=convo.usernames?.[otherId]||'';
-      const item=document.createElement('div');item.className='dm-item';
-      item.innerHTML=`<div class="dm-flag">${otherCountry.flag||'👁'}</div><div class="dm-info"><div class="dm-name">${esc(displayName(otherUsername,otherCountry))}</div><div class="dm-preview">${last?esc(last.text.slice(0,45))+'...':'// silence'}</div></div>`;
-      item.addEventListener('click',()=>{activeDmPeer={id:otherId,country:otherCountry,username:otherUsername,dmId};openDmConvo(activeDmPeer);});
+// DM
+document.getElementById("btn-open-dm").addEventListener("click", openDmInbox);
+document.getElementById("btn-back-from-dm").addEventListener("click", function(){show("landing");});
+document.getElementById("btn-back-from-convo").addEventListener("click", openDmInbox);
+
+function openDmInbox() {
+  show("dm-screen");
+  var list = document.getElementById("dm-list");
+  list.innerHTML = '<div class="empty-state">// scanning the void...</div>';
+  db.ref("dms").once("value").then(function(snap) {
+    list.innerHTML = "";
+    if (!snap.exists()) { list.innerHTML='<div class="empty-state">// no echoes yet<br>// talk to someone first</div>'; return; }
+    var data = snap.val(); var found = false;
+    for (var dmId in data) {
+      if (dmId.indexOf(uid) === -1) continue;
+      found = true;
+      var convo = data[dmId];
+      var msgs = convo.messages ? Object.values(convo.messages).sort(function(a,b){return b.ts-a.ts;}) : [];
+      var last = msgs[0];
+      // extract peer id — dmId is "idA__idB"
+      var parts = dmId.split("__");
+      var otherId = parts[0] === uid ? parts[1] : parts[0];
+      var otherCountry = (convo.countries && convo.countries[otherId]) || {flag:"👁",name:"the void"};
+      var otherUsername = (convo.usernames && convo.usernames[otherId]) || "";
+      var item = document.createElement("div"); item.className = "dm-item";
+      item.innerHTML = '<div class="dm-flag">'+(otherCountry.flag||"👁")+'</div><div class="dm-info"><div class="dm-name">'+esc(displayName(otherUsername,otherCountry))+'</div><div class="dm-preview">'+(last?esc(last.text.slice(0,45))+"...":"// silence")+'</div></div>';
+      (function(oid,oc,ou,did){
+        item.addEventListener("click", function(){ activeDmPeer={id:oid,country:oc,username:ou,dmId:did}; openDmConvo(activeDmPeer); });
+      })(otherId, otherCountry, otherUsername, dmId);
       list.appendChild(item);
     }
-    if(!found)list.innerHTML='<div class="empty-state">// no echoes yet<br/>// talk to someone first</div>';
+    if (!found) list.innerHTML = '<div class="empty-state">// no echoes yet<br>// talk to someone first</div>';
   });
 }
-function openDmConvo(peer){
-  document.getElementById('dm-peer-flag').textContent=peer.country?.flag||'👁';
-  document.getElementById('dm-peer-name').textContent=displayName(peer.username,peer.country);
-  const msgs=document.getElementById('dm-messages');msgs.innerHTML='';
-  show('dm-convo-screen');
-  db.ref(`dms/${peer.dmId}/countries`).update({[uid]:myCountry,[peer.id]:peer.country});
-  db.ref(`dms/${peer.dmId}/usernames`).update({[uid]:myUsername,[peer.id]:peer.username||''});
-  db.ref(`dms/${peer.dmId}/messages`).off();
-  db.ref(`dms/${peer.dmId}/messages`).on('child_added',snap=>{
-    const msg=snap.val();
-    const isMine=msg.uid===uid;
-    const flag=isMine?(myCountry?.flag||'👁'):(peer.country?.flag||'👁');
-    const senderName=isMine?(myUsername||'you'):(peer.username||'stranger');
-    const time=new Date(msg.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    const div=document.createElement('div');div.className=`msg ${isMine?'mine':'theirs'}`;
-    div.innerHTML=`<div class="msg-meta"><span class="msg-flag">${flag}</span><span class="msg-sender">${esc(senderName)}</span></div><span class="msg-text">${esc(filterSlurs(msg.text))}</span><span class="msg-time">${time}</span>`;
-    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
-  });
-}
-document.getElementById('btn-dm-send').addEventListener('click',sendDmMsg);
-document.getElementById('dm-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendDmMsg();});
-async function sendDmMsg(){if(!activeDmPeer)return;const inp=document.getElementById('dm-input');const text=inp.value.trim();if(!text)return;inp.value='';const clean=await moderateMessage(text);db.ref(`dms/${activeDmPeer.dmId}/messages`).push({uid,text:clean,ts:Date.now()});}
 
-setInterval(()=>{db.ref('queue').once('value').then(snap=>{const n=snap.exists()?Object.keys(snap.val()).length:0;document.getElementById('queue-count').textContent=n>0?`(${n} searching...)`:'';});},3000);
+function openDmConvo(peer) {
+  document.getElementById("dm-peer-flag").textContent = peer.country&&peer.country.flag||"👁";
+  document.getElementById("dm-peer-name").textContent = displayName(peer.username, peer.country);
+  var msgs = document.getElementById("dm-messages"); msgs.innerHTML = "";
+  show("dm-convo-screen");
+  var cu = {}; cu[uid]=myCountry; cu[peer.id]=peer.country;
+  var un = {}; un[uid]=myUsername; un[peer.id]=peer.username||"";
+  db.ref("dms/"+peer.dmId+"/countries").update(cu);
+  db.ref("dms/"+peer.dmId+"/usernames").update(un);
+  db.ref("dms/"+peer.dmId+"/messages").off();
+  db.ref("dms/"+peer.dmId+"/messages").on("child_added", function(snap) {
+    var msg = snap.val();
+    var isMine = msg.uid === uid;
+    var flag = isMine?(myCountry&&myCountry.flag||"👁"):(peer.country&&peer.country.flag||"👁");
+    var sender = isMine?(myUsername||"you"):(peer.username||"stranger");
+    var time = new Date(msg.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    var div = document.createElement("div"); div.className="msg "+(isMine?"mine":"theirs");
+    div.innerHTML='<div class="msg-meta"><span class="msg-flag">'+flag+'</span><span class="msg-sender">'+esc(sender)+'</span></div><span class="msg-text">'+esc(filterSlurs(msg.text))+'</span><span class="msg-time">'+time+'</span>';
+    msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+  });
+}
+
+document.getElementById("btn-dm-send").addEventListener("click", sendDmMsg);
+document.getElementById("dm-input").addEventListener("keydown", function(e){if(e.key==="Enter")sendDmMsg();});
+function sendDmMsg() {
+  if (!activeDmPeer) return;
+  var inp = document.getElementById("dm-input");
+  var text = inp.value.trim(); if(!text) return; inp.value="";
+  db.ref("dms/"+activeDmPeer.dmId+"/messages").push({uid:uid, text:filterSlurs(text), ts:Date.now()});
+}
+
+setInterval(function(){
+  db.ref("queue").once("value").then(function(snap){
+    var n = snap.exists()?Object.keys(snap.val()).length:0;
+    document.getElementById("queue-count").textContent = n>0?"("+n+" searching...)":"";
+  });
+},3000);
 </script>
 </body>
 </html>
