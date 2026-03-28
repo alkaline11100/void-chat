@@ -188,6 +188,7 @@ body.nk-mode .btn{animation:nkText .1s infinite!important;}
   </div>
   <div class="chat-actions">
     <button id="btn-dm">💌 dm this stranger</button>
+    <button id="btn-report" style="background:rgba(255,58,58,.08);border:1px solid #ff3a3a;color:#ff3a3a;flex:0.5;">🚩 report</button>
     <button id="btn-leave">disconnect</button>
   </div>
 </div>
@@ -222,8 +223,23 @@ body.nk-mode .btn{animation:nkText .1s infinite!important;}
   🛡️ <strong style="color:#7b5aaa;">Talk to Someone in the Void</strong> prohibits illegal content, nudity, harassment, and content involving minors. No personal data stored. <strong style="color:#7b5aaa;">13+</strong> only. ⚠️ Moving conversations off-platform is entirely at your own risk — the owner accepts <strong style="color:#7b5aaa;">no responsibility</strong> for off-platform interactions.
 </div>
 
+<!-- REPORT MODAL -->
+<div id="report-modal" style="position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:24px;">
+  <div style="max-width:380px;width:100%;border:1px solid #ff3a3a;border-radius:10px;padding:24px;background:rgba(10,0,20,.97);box-shadow:0 0 30px rgba(255,58,58,.3);">
+    <div style="font-family:VT323,monospace;font-size:1.8rem;color:#ff3a3a;margin-bottom:8px;letter-spacing:2px;">🚩 REPORT USER</div>
+    <p style="font-size:.7rem;color:#9977cc;margin-bottom:14px;line-height:1.6;">Describe what happened. Swearing is fine — only slurs, harassment, and illegal content will be actioned.</p>
+    <textarea id="report-reason" placeholder="what did they do..." style="width:100%;background:rgba(20,0,40,.8);border:1px solid rgba(255,58,58,.5);color:#e0d0ff;font-family:Space Mono,monospace;font-size:.75rem;padding:10px;border-radius:6px;outline:none;resize:none;height:90px;margin-bottom:12px;"></textarea>
+    <div style="display:flex;gap:8px;">
+      <button id="report-submit" style="flex:1;padding:10px;font-family:VT323,monospace;font-size:1.2rem;letter-spacing:2px;cursor:pointer;border-radius:6px;border:1px solid #ff3a3a;background:rgba(255,58,58,.2);color:#ff3a3a;">SEND REPORT</button>
+      <button id="report-cancel" style="flex:1;padding:10px;font-family:VT323,monospace;font-size:1.2rem;letter-spacing:2px;cursor:pointer;border-radius:6px;border:1px solid #6a4a9a;background:transparent;color:#6a4a9a;">CANCEL</button>
+    </div>
+    <div id="report-feedback" style="font-size:.65rem;margin-top:8px;text-align:center;min-height:1rem;"></div>
+  </div>
+</div>
+
 <script>
-var COUNTRIES = [
+// report logic — paste this BEFORE the closing </script> of your main script
+</script>
   {code:"AF",name:"Afghanistan",flag:"🇦🇫"},{code:"AL",name:"Albania",flag:"🇦🇱"},{code:"DZ",name:"Algeria",flag:"🇩🇿"},
   {code:"AD",name:"Andorra",flag:"🇦🇩"},{code:"AO",name:"Angola",flag:"🇦🇴"},{code:"AG",name:"Antigua & Barbuda",flag:"🇦🇬"},
   {code:"AR",name:"Argentina",flag:"🇦🇷"},{code:"AM",name:"Armenia",flag:"🇦🇲"},{code:"AU",name:"Australia",flag:"🇦🇺"},
@@ -620,6 +636,56 @@ function sendDmMsg() {
   var text = inp.value.trim(); if(!text) return; inp.value="";
   db.ref("dms/"+activeDmPeer.dmId+"/messages").push({uid:uid, text:filterSlurs(text), ts:Date.now()});
 }
+
+// report
+var chatHistory = [];
+var MAX_HISTORY = 20;
+var originalAppendMsg = appendMsg;
+function appendMsg(msg, containerId) {
+  originalAppendMsg(msg, containerId);
+  if (containerId === "messages") {
+    chatHistory.push({uid: msg.uid, text: msg.text, mine: msg.uid === uid});
+    if (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+  }
+}
+
+document.getElementById("btn-report").addEventListener("click", function() {
+  if (!peerId) return;
+  document.getElementById("report-reason").value = "";
+  document.getElementById("report-feedback").textContent = "";
+  document.getElementById("report-modal").style.display = "flex";
+});
+document.getElementById("report-cancel").addEventListener("click", function() {
+  document.getElementById("report-modal").style.display = "none";
+});
+document.getElementById("report-submit").addEventListener("click", function() {
+  var reason = document.getElementById("report-reason").value.trim();
+  if (!reason) { document.getElementById("report-feedback").style.color="#ff3a3a"; document.getElementById("report-feedback").textContent = "// please describe what happened"; return; }
+  var fb = document.getElementById("report-feedback");
+  fb.style.color = "#00ffcc"; fb.textContent = "// sending...";
+  fetch("/report", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      reportedUid: peerId,
+      reporterUid: uid,
+      message: reason,
+      context: chatHistory.slice(-10),
+      reportedCountry: peerCountry,
+      reportedUsername: peerUsername || ""
+    })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ok) { fb.textContent = "// report sent. thank you."; setTimeout(function(){ document.getElementById("report-modal").style.display="none"; }, 1500); }
+    else { fb.style.color="#ff3a3a"; fb.textContent = "// failed to send report"; }
+  }).catch(function() { fb.style.color="#ff3a3a"; fb.textContent = "// failed to send report"; });
+});
+
+// ban check on load
+db.ref("bans/" + uid).once("value").then(function(snap) {
+  if (snap.exists() && snap.val().banned) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#020005;font-family:VT323,monospace;font-size:2rem;color:#ff3a3a;text-align:center;padding:20px;">👁<br><br>YOU HAVE BEEN BANNED FROM THE VOID<br><br><span style="font-size:1rem;color:#6a4a9a;">your signal has been permanently severed</span></div>';
+  }
+});
 
 setInterval(function(){
   db.ref("queue").once("value").then(function(snap){
