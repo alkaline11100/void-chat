@@ -50,7 +50,7 @@ p.sub{margin-top:8px;font-size:.7rem;color:#9977cc;text-align:center;font-style:
 #queue-screen p{margin-top:8px;font-size:.7rem;color:var(--muted);text-align:center;}
 #queue-count{color:#00ffcc;text-shadow:0 0 8px #00ffcc;}
 
-#chat-screen,#dm-convo-screen{justify-content:flex-start;padding:0;overflow:hidden;}
+#chat-screen,#dm-convo-screen{justify-content:flex-start;padding:0;overflow:hidden;padding-bottom:36px;}
 .chat-header{width:100%;padding:10px 16px;display:flex;align-items:center;gap:10px;background:rgba(2,0,8,.92);backdrop-filter:blur(12px);flex-shrink:0;border-bottom:2px solid transparent;animation:borderRave 3s linear infinite;}
 .chat-header .peer-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
 .chat-header .flag-display{font-size:1.6rem;flex-shrink:0;}
@@ -465,7 +465,14 @@ document.getElementById('epilepsy-cancel').addEventListener('click',()=>{
   document.getElementById('origin-label').textContent=`// your origin: ${myCountry.flag} ${myCountry.name}`;
 });
 
-// ── UTILS ──
+function getDmPeerId(dmId){
+  // dmId is two uids joined by _ but uids themselves contain _ so we match by prefix
+  const parts=dmId.split('_');
+  // uids are "user_XXXXXXXX" so rejoin in pairs
+  const idA=parts.slice(0,2).join('_');
+  const idB=parts.slice(2).join('_');
+  return idA===uid?idB:idA;
+}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
 function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function displayName(username,country){return username||`stranger // ${country?.name||'void'}`;}
@@ -581,7 +588,7 @@ function openDmInbox(){
       if(!dmId.includes(uid))continue;found=true;
       const msgs=convo.messages?Object.values(convo.messages).sort((a,b)=>b.ts-a.ts):[];
       const last=msgs[0];
-      const otherId=dmId.split('_').find(p=>p!==uid)||'';
+      const otherId=getDmPeerId(dmId);
       const otherCountry=convo.countries?.[otherId]||{flag:'👁',name:'the void'};
       const otherUsername=convo.usernames?.[otherId]||'';
       const item=document.createElement('div');item.className='dm-item';
