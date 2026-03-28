@@ -254,6 +254,26 @@ body.nk-mode .btn{animation:nkText .1s infinite,borderRave .2s linear infinite!i
 
 <script>
 // ── SLUR FILTER ──
+const SLUR_CORES = [
+  "nigger","nigga","chink","gook","spic","kike","wetback","beaner","coon","jigaboo",
+  "raghead","towelhead","sandnigger","shitskin","golliwog","nip","kraut","polack",
+  "dago","wop","greaseball","hymie","heeb","yid","paddy","fenian","taig","pikey",
+  "gypo","cholo","slope","slant","squaw","redskin","injun","faggot","tranny",
+  "shemale","poofter","poof","battyboy","sodomite","retard","spastic","mong",
+  "mongol","cripple","gimp","muzzie","paki","subhuman","femoid","roastie"
+];
+
+// converts a slur core into a fuzzy regex that catches l33tspeak, spaces, symbols
+function fuzzyPattern(word){
+  const charMap={
+    a:'[a@4\\.\\-_\\s]*',e:'[e3\\.\\-_\\s]*',i:'[i1!|\\.\\-_\\s]*',
+    o:'[o0\\.\\-_\\s]*',u:'[u\\.\\-_\\s]*',g:'[g9\\.\\-_\\s]*',
+    s:'[s\\$5\\.\\-_\\s]*',t:'[t7\\.\\-_\\s]*',n:'[n\\.\\-_\\s]*',
+    k:'[k\\.\\-_\\s]*',r:'[r\\.\\-_\\s]*',c:'[c\\.\\-_\\s]*',
+    h:'[h\\.\\-_\\s]*',f:'[f\\.\\-_\\s]*',p:'[p\\.\\-_\\s]*',
+    q:'[q\\.\\-_\\s]*',
+  };
+  return word.split('').map(c=>charMap[c]||(c.replace(/[.*+?^${}()|[\]\\]/g,'\\// ── SLUR FILTER ──
 const SLUR_LIST=["nigger","nigga","chink","gook","spic","spick","kike","wetback","beaner","zipperhead","coon","jigaboo","porch monkey","sambo","darkie","darky","raghead","towelhead","sandnigger","camel jockey","jungle bunny","tar baby","nip","kraut","polack","dago","wop","guinea","greaseball","hymie","heeb","yid","cracker","honky","paddy","fenian","taig","pikey","gypo","gyppo","cholo","slope","slant","squaw","redskin","injun","shitskin","golliwog","half-breed","faggot","fag","dyke","tranny","shemale","he-she","ladyboy","homo","poofter","poof","batty boy","battyboy","sodomite","fairy","pansy","sissy","pillow biter","carpet muncher","fudge packer","retard","retarded","spaz","spastic","mong","mongol","cretin","cripple","gimp","tard","muzzie","mussie","paki","christard","papist","proddy","whore","slut","skank","thot","bimbo","femoid","roastie","subhuman","vermin"];
 function filterSlurs(text){
   let out=text;
@@ -262,6 +282,42 @@ function filterSlurs(text){
     out=out.replace(rx,'[removed]');
   });
   return out;
+}')+'[\\s\\-_\\.]*')).join('');
+}
+
+const SLUR_REGEXES = SLUR_CORES.map(s=>new RegExp(fuzzyPattern(s),'gi'));
+
+function filterSlurs(text){
+  let out=text;
+  SLUR_REGEXES.forEach(rx=>{out=out.replace(rx,'[removed]');});
+  return out;
+}
+
+// ── AI MODERATION ──
+async function aiModerate(text){
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:100,
+        system:`You are a content moderator. Your ONLY job is to detect hate speech, slurs, and targeted harassment based on race, ethnicity, gender, sexuality, religion, or disability. Swearing and profanity are ALLOWED. Reply ONLY with valid JSON: {"flagged":true/false,"cleaned":"message with slurs replaced by [removed]"}. Never explain. Never add anything else.`,
+        messages:[{role:'user',content:text}]
+      })
+    });
+    if(!res.ok)return null;
+    const data=await res.json();
+    const raw=data.content?.[0]?.text||'';
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    return parsed.cleaned||null;
+  }catch(e){return null;}
+}
+
+async function moderateMessage(text){
+  const fuzzyFiltered=filterSlurs(text);
+  const aiResult=await aiModerate(fuzzyFiltered);
+  return aiResult||fuzzyFiltered;
 }
 
 // ── COUNTRIES ──
@@ -555,10 +611,11 @@ function appendMsg(msg,container='messages'){
 document.getElementById('btn-send').addEventListener('click',sendMsg);
 document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();else setTyping(true);});
 document.getElementById('chat-input').addEventListener('blur',()=>setTyping(false));
-function sendMsg(){
+async function sendMsg(){
   const inp=document.getElementById('chat-input');const text=inp.value.trim();
   if(!text||!sessionId)return;inp.value='';setTyping(false);
-  db.ref(`sessions/${sessionId}/messages`).push({uid,text:filterSlurs(text),ts:Date.now()});
+  const clean=await moderateMessage(text);
+  db.ref(`sessions/${sessionId}/messages`).push({uid,text:clean,ts:Date.now()});
 }
 function setTyping(v){if(!sessionId)return;clearTimeout(typingTimer);db.ref(`sessions/${sessionId}/typing/${uid}`).set(v);if(v)typingTimer=setTimeout(()=>setTyping(false),3000);}
 
@@ -620,7 +677,7 @@ function openDmConvo(peer){
 }
 document.getElementById('btn-dm-send').addEventListener('click',sendDmMsg);
 document.getElementById('dm-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendDmMsg();});
-function sendDmMsg(){if(!activeDmPeer)return;const inp=document.getElementById('dm-input');const text=inp.value.trim();if(!text)return;inp.value='';db.ref(`dms/${activeDmPeer.dmId}/messages`).push({uid,text:filterSlurs(text),ts:Date.now()});}
+async function sendDmMsg(){if(!activeDmPeer)return;const inp=document.getElementById('dm-input');const text=inp.value.trim();if(!text)return;inp.value='';const clean=await moderateMessage(text);db.ref(`dms/${activeDmPeer.dmId}/messages`).push({uid,text:clean,ts:Date.now()});}
 
 setInterval(()=>{db.ref('queue').once('value').then(snap=>{const n=snap.exists()?Object.keys(snap.val()).length:0;document.getElementById('queue-count').textContent=n>0?`(${n} searching...)`:'';});},3000);
 </script>
